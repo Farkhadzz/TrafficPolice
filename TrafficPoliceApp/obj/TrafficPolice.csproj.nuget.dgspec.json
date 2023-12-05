@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Desktop\\TrafficPolice\\TrafficPolice.csproj": {}
+    "C:\\Users\\user\\Desktop\\TrafficPolice\\TrafficPoliceApp\\TrafficPolice.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\Desktop\\TrafficPolice\\TrafficPolice.csproj": {
+    "C:\\Users\\user\\Desktop\\TrafficPolice\\TrafficPoliceApp\\TrafficPolice.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Desktop\\TrafficPolice\\TrafficPolice.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\TrafficPolice\\TrafficPoliceApp\\TrafficPolice.csproj",
         "projectName": "TrafficPolice",
-        "projectPath": "C:\\Users\\user\\Desktop\\TrafficPolice\\TrafficPolice.csproj",
+        "projectPath": "C:\\Users\\user\\Desktop\\TrafficPolice\\TrafficPoliceApp\\TrafficPolice.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Desktop\\TrafficPolice\\obj\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\TrafficPolice\\TrafficPoliceApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -44,6 +44,12 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
+          "dependencies": {
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.5, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

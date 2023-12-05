@@ -6,6 +6,8 @@ public enum FineType
     Speeding,
 }
 public class Fine {
+
+    public string Name { get; set; }
     public int Id { get; set; }
     public string CarNumber { get; set; }
     public string CarName { get; set; }
