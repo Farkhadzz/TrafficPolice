@@ -33,25 +33,25 @@ public class FineController : ControllerBase
     {
         var fineIdToGetObj = base.HttpContext.Request.QueryString["id"];
 
-        if (fineIdToGetObj == null || int.TryParse(fineIdToGetObj, out int productIdToGet) == false)
+        if (fineIdToGetObj == null || int.TryParse(fineIdToGetObj, out int fineIdToGet) == false)
         {
             base.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return;
         }
 
         using var connection = new SqlConnection(ConnectionString);
-        var product = await connection.QueryFirstOrDefaultAsync<Fine>(
+        var fine = await connection.QueryFirstOrDefaultAsync<Fine>(
             sql: "select top 1 * from Fines where Id = @Id",
-            param: new { Id = productIdToGet });
+            param: new { Id = fineIdToGet });
 
-        if (product is null)
+        if (fine is null)
         {
             base.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
             return;
         }
 
         using var writer = new StreamWriter(base.HttpContext.Response.OutputStream);
-        await writer.WriteLineAsync(JsonSerializer.Serialize(product));
+        await writer.WriteLineAsync(JsonSerializer.Serialize(fine));
 
         base.HttpContext.Response.ContentType = "application/json";
         base.HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
@@ -74,7 +74,7 @@ public class FineController : ControllerBase
         }
 
         using var connection = new SqlConnection(ConnectionString);
-        var products = await connection.ExecuteAsync(
+        var fines = await connection.ExecuteAsync(
             @"insert into Fines (Name, Price) 
         values(@Name, @Price)",
             param: new
