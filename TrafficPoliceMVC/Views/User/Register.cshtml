@@ -1,0 +1,34 @@
+@model UserModel
+
+<form asp-action="Register" method="post">
+    <div>
+        <label asp-for="Username">Имя пользователя:</label>
+        <input asp-for="Username" />
+        <span asp-validation-for="Username"></span>
+    </div>
+    
+    <div>
+        <label asp-for="FirstName">Имя:</label>
+        <input asp-for="FirstName" />
+        <span asp-validation-for="FirstName"></span>
+    </div>
+    
+    <div>
+        <label asp-for="LastName">Фамилия:</label>
+        <input asp-for="LastName" />
+        <span asp-validation-for="LastName"></span>
+    </div>
+
+    <div>
+        <label asp-for="Email">Email:</label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+
+    <div>
+        <label asp-for="Password">Пароль:</label>
+        <input asp-for="Password" type="password" />
+    </div>
+
+    <button type="submit">Зарегистрироваться</button>
+</form>

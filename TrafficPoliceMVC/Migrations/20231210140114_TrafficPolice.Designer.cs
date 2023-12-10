@@ -12,8 +12,8 @@ using TrafficPoliceMVC.Sql;
 namespace TrafficPoliceMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231210134628_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20231210140114_TrafficPolice")]
+    partial class TrafficPolice
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,6 +69,10 @@ namespace TrafficPoliceMVC.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
