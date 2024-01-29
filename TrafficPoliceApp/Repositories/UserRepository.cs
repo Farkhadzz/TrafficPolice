@@ -33,21 +33,24 @@ public class UserRepository : IUserRepository
             param: user);
     }
 
-    public async Task<User?> GetUser(UserDto userDto)
+    public async Task<User> GetUser(UserDto userDto)
     {
         using var connection = new SqlConnection(ConnectionString);
-
+        
         var user = await connection.QueryFirstOrDefaultAsync<User>(
-            sql: @"SELECT *
-                FROM [Users]
-                WHERE Email = @Email AND Password = @Password",
-            param: new
-            {
-                email = userDto.Email,
-                password = userDto.Password,
-            }
-        );
+            "SELECT * FROM Users WHERE Email = @Email AND Password = @Password",
+            new { Email = userDto.Email, Password = userDto.Password });
 
         return user;
     }
+
+    // public async Task<bool> IsEmailUniqueAsync(string email)
+    // {
+    //     using var connection = new SqlConnection(ConnectionString);
+    //     var result = await connection.ExecuteScalarAsync<bool>(
+    //         "SELECT COUNT(*) FROM Users WHERE Email = @Email",
+    //         new { Email = email });
+
+    //     return result == null;
+    // }
 }

@@ -4,7 +4,7 @@
     string password = string.Empty;
 }
 
-<form>
+<form asp-action="Login" method="post">
   <div class="form-group">
     <label for="exampleInputEmail1">Email address</label>
     <input asp-for="@email" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Email">

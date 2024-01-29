@@ -32,24 +32,34 @@ public class IdentityController : Controller
 
     [HttpPost]
     public async Task<IActionResult> Login([FromForm] UserDto userDto)
+{
+    var user = await userRepository.GetUser(userDto);
+
+    if (user is not null)
     {
-        var user = await userRepository.GetUser(userDto);
+        var hash = this.dataProtector.Protect(user.Id.ToString());
+        base.HttpContext.Response.Cookies.Append("Authorize", hash);
 
-        if (user is not null)
-        {
-            var hash = this.dataProtector.Protect(user.Id.ToString());
-
-            base.HttpContext.Response.Cookies.Append("Authorize", hash);
-
-            return RedirectToAction("Index", "Fine");
-        }
-        else return BadRequest("Wrong Data");
+        return RedirectToAction("Index", "Fine");
     }
+    else
+    {
+        return BadRequest("Wrong Data");
+    }
+}
 
     [HttpPost]
     public async Task<IActionResult> Register([FromForm] User user)
     {
-        await userRepository.InsertUserAsync(new Models.User{
+        // bool isEmailUnique = await userRepository.IsEmailUniqueAsync(user.Email);
+
+        // if (!isEmailUnique)
+        // {
+        //     return BadRequest("Email is already taken");
+        // }
+
+        await userRepository.InsertUserAsync(new Models.User
+        {
             Email = user.Email,
             Password = user.Password,
             FirstName = user.FirstName,
