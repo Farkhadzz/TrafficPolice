@@ -1,0 +1,37 @@
+@{
+    ViewData["Title"] = "Register";
+    string email = string.Empty;
+    string password = string.Empty;
+    string firstname = string.Empty;
+    string lastname = string.Empty;
+    int age = 0;
+}
+
+<form asp-action="Register" method="post">
+  <div class="form-group">
+    <label for="@email">Email Address</label>
+    <input asp-for="@email" type="text" class="form-control" placeholder="Enter Email">
+  </div>
+  <div class="form-group">
+    <label for="@firstname">FirstName</label>
+    <input asp-for="@firstname" type="text" class="form-control" placeholder="Enter FirstName">
+  </div>
+    <div class="form-group">
+    <label asp-for="@lastname">LastName</label>
+    <input asp-for="@lastname" type="text" class="form-control" placeholder="Enter LastName">
+  </div>
+    <div class="form-group">
+    <label for="@age">Age</label>
+    <input asp-for="@age" type="text" class="form-control" placeholder="Enter Age">
+  </div>
+  <div class="form-group">
+    <label asp-for="@password" type="password" >Password</label>
+    <input asp-for="@password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+  </div>
+  <div class="register">
+                <span>Already have an account?
+                    <a asp-action="Login">Login</a>
+                </span>
+            </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

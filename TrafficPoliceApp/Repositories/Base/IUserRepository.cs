@@ -1,4 +1,5 @@
 using TrafficPoliceApp.Models;
+using TrafficPoliceApp.Dtos;
 
 namespace TrafficPoliceApp.Repositories.Base
 {
@@ -6,5 +7,6 @@ namespace TrafficPoliceApp.Repositories.Base
     {
         Task<IEnumerable<User>> GetAllAsync();
         Task InsertUserAsync(User user);
+        Task<User?> GetUser(UserDto userDto);
     }
 }

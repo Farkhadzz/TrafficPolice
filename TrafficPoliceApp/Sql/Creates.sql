@@ -16,3 +16,13 @@ CREATE TABLE Users (
 	[Email] NVARCHAR(30),
 	[Password] NVARCHAR(255)
 )
+
+CREATE TABLE Logs (
+	[LogId] int primary key identity,
+    [UserId] int,
+    [Url] nvarchar(max),
+    [MethodType] nvarchar(10),
+    [StatusCode] int,
+    [RequestBody] nvarchar(max),
+    [ResponseBody] nvarchar(max)
+)

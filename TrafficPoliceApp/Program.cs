@@ -7,16 +7,27 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<IFineRepository, FineRepository>();
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
+
+builder.Services.AddSingleton<IUserRepository>(provider => 
+{
+    string connectionStringName = "TrafficPoliceDb";
+
+    string? connectionString = builder.Configuration.GetConnectionString(connectionStringName);
+
+    if (string.IsNullOrEmpty(connectionString) || string.IsNullOrWhiteSpace(connectionString)) 
+    {
+        throw new Exception($"{connectionStringName} not found");
+    }
+
+    return new UserRepository(connectionString);
+});
 
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

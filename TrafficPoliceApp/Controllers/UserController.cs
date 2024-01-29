@@ -32,9 +32,8 @@ public class UserController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromForm]UserDto dto) {
         await this.userRepository.InsertUserAsync(new User {
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Email = dto.Email
+            Email = dto.Email,
+            Password = dto.Password
         });
 
         return RedirectToAction("Index");

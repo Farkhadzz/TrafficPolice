@@ -3,11 +3,17 @@ namespace TrafficPoliceApp.Repositories;
 using System.Data.SqlClient;
 using TrafficPoliceApp.Models;
 using TrafficPoliceApp.Repositories.Base;
+using TrafficPoliceApp.Dtos;
 using Dapper;
 
 public class UserRepository : IUserRepository
 {
-    private const string ConnectionString = "Server=localhost;Database=TrafficPoliceDb;Trusted_Connection=True;";
+    private readonly string ConnectionString;
+
+    public UserRepository(string ConnectionString)
+    {
+        this.ConnectionString = ConnectionString;
+    }
 
     public async Task<IEnumerable<User>> GetAllAsync()
     {
@@ -23,7 +29,25 @@ public class UserRepository : IUserRepository
         using var connection = new SqlConnection(ConnectionString);
         
         var users = await connection.ExecuteAsync(
-            sql: "INSERT INTO [Users] (FirstName, LastName, Email) values (@FirstName, @LastName, @Email);",
+            sql: "INSERT INTO [Users] (FirstName, LastName, Email, Age, Password) values (@FirstName, @LastName, @Email, @Age, @Password);",
             param: user);
+    }
+
+    public async Task<User?> GetUser(UserDto userDto)
+    {
+        using var connection = new SqlConnection(ConnectionString);
+
+        var user = await connection.QueryFirstOrDefaultAsync<User>(
+            sql: @"SELECT *
+                FROM [Users]
+                WHERE Email = @Email AND Password = @Password",
+            param: new
+            {
+                email = userDto.Email,
+                password = userDto.Password,
+            }
+        );
+
+        return user;
     }
 }
