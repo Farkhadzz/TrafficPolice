@@ -22,6 +22,21 @@ builder.Services.AddSingleton<IUserRepository>(provider =>
     return new UserRepository(connectionString);
 });
 
+builder.Services.AddScoped<ILoggerRepository>(provider => 
+{
+    string connectionStringName = "TrafficPoliceDb";
+
+    string? connectionString = builder.Configuration.GetConnectionString(connectionStringName);
+
+    if (string.IsNullOrEmpty(connectionString) || string.IsNullOrWhiteSpace(connectionString)) 
+    {
+        throw new Exception($"{connectionStringName} not found");
+    }
+
+    bool isCustomLoggingEnabled = builder.Configuration.GetSection("isCustomLoggingEnabled").Get<bool>();
+
+    return new LoggingRepository(connectionString, isCustomLoggingEnabled);
+});
 
 var app = builder.Build();
 
