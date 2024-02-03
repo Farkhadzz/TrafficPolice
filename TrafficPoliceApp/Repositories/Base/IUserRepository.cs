@@ -9,5 +9,6 @@ namespace TrafficPoliceApp.Repositories.Base
         // Task<bool> IsEmailUniqueAsync(string email);
         Task InsertUserAsync(User user);
         Task<User?> GetUser(UserDto userDto);
+        Task<User?> GetUserById(User user);
     }
 }

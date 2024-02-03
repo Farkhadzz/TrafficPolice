@@ -32,21 +32,23 @@ public class IdentityController : Controller
 
     [HttpPost]
     public async Task<IActionResult> Login([FromForm] UserDto userDto)
-{
-    var user = await userRepository.GetUser(userDto);
-
-    if (user is not null)
     {
-        var hash = this.dataProtector.Protect(user.Id.ToString());
-        base.HttpContext.Response.Cookies.Append("Authorize", hash);
+        var user = await userRepository.GetUser(userDto);
 
-        return RedirectToAction("Index", "Fine");
+        if (user is not null)
+        {
+            var hash = this.dataProtector.Protect(user.Id.ToString());
+            base.HttpContext.Response.Cookies.Append("Authorize", hash);
+
+            ViewData["UserId"] = user.Id;
+
+            return RedirectToAction("Index", "Fine");
+        }
+        else
+        {
+            return BadRequest("Wrong Data");
+        }
     }
-    else
-    {
-        return BadRequest("Wrong Data");
-    }
-}
 
     [HttpPost]
     public async Task<IActionResult> Register([FromForm] User user)
@@ -58,7 +60,9 @@ public class IdentityController : Controller
         //     return BadRequest("Email is already taken");
         // }
 
-        await userRepository.InsertUserAsync(new Models.User
+        if(user != null && !string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName))
+        {
+            await userRepository.InsertUserAsync(new Models.User
         {
             Email = user.Email,
             Password = user.Password,
@@ -67,5 +71,7 @@ public class IdentityController : Controller
             Age = user.Age
         });
         return base.RedirectToAction("Login");
+        }
+        else return BadRequest("Wrong Data");
     }
 }

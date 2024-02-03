@@ -44,6 +44,17 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public async Task<User> GetUserById(User user)
+    {
+        using var connection = new SqlConnection(ConnectionString);
+
+        var userId = await connection.QueryFirstOrDefaultAsync<User>(
+            "SELECT [Id] FROM [Users]",
+            new { Id = user.Id});
+
+            return userId;
+    }
+
     // public async Task<bool> IsEmailUniqueAsync(string email)
     // {
     //     using var connection = new SqlConnection(ConnectionString);
