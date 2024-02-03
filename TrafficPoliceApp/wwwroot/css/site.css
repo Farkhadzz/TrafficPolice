@@ -19,4 +19,36 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-image: url("https://images.unsplash.com/photo-1595801185745-c35f30d63934?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+header {
+  font-size: 20px;
+}
+
+.gradient-custom {
+  background: #6a11cb;
+  
+  background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+  
+  background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
+  }
+
+  .navbar-new {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.login-button {
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.reg-button {
+  color: rgb(255, 255, 255);
+  cursor: pointer;
 }
