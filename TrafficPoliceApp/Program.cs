@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using TrafficPoliceApp.Repositories;
 using TrafficPoliceApp.Repositories.Base;
 
@@ -5,6 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(o => 
+    {
+        o.LoginPath = "/Identity/Login";
+        o.ReturnUrlParameter = "returnUrl";
+    });
 
 builder.Services.AddSingleton<IFineRepository, FineRepository>();
 
