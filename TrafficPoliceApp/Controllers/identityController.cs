@@ -20,7 +20,7 @@ public class IdentityController : Controller
     }
 
     [HttpGet]
-    public IActionResult Login(string returnUrl)
+    public IActionResult Login(string? returnUrl)
     {
         base.ViewData["returnUrl"] = returnUrl;
 
@@ -40,18 +40,20 @@ public class IdentityController : Controller
 
         if (user is not null)
         {
-                var claims = new Claim[]
-                {
+            var claims = new Claim[]
+            {
                     new (ClaimTypes.Email, user.Email),
                     new (ClaimTypes.Name, user.FirstName),
-                };
+            };
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                await base.HttpContext.SignInAsync(
-                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
-                    principal: new ClaimsPrincipal(claimsIdentity)
-                );
+            await base.HttpContext.SignInAsync(
+                scheme: CookieAuthenticationDefaults.AuthenticationScheme,
+                principal: new ClaimsPrincipal(claimsIdentity)
+            );
+
+            return RedirectToAction("Index", "Home");
         }
         else
         {
@@ -71,23 +73,25 @@ public class IdentityController : Controller
         //     return BadRequest("Email is already taken");
         // }
 
-        if(user != null && !string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName))
+        if (user != null && !string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName))
         {
             await userRepository.InsertUserAsync(new Models.User
-        {
-            Email = user.Email,
-            Password = user.Password,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Age = user.Age
-        });
-        return base.RedirectToAction("Login");
+            {
+                Email = user.Email,
+                Password = user.Password,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Age = user.Age
+            });
+            return base.RedirectToAction("Login");
         }
         else return BadRequest("Wrong Data");
     }
 
-     public async Task LogOut() 
-     {
-        await base.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-     }
+    public async Task<IActionResult> Logout()
+{
+    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+    return RedirectToAction("Index", "Home");
+}
 }
