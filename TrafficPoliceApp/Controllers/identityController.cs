@@ -3,24 +3,27 @@ using Microsoft.AspNetCore.Mvc;
 using TrafficPoliceApp.Dtos;
 using TrafficPoliceApp.Models;
 using TrafficPoliceApp.Repositories.Base;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrafficPoliceApp.Controllers;
 
 public class IdentityController : Controller
 {
-    private readonly IDataProtector dataProtector;
-
     private readonly IUserRepository userRepository;
 
-    public IdentityController(IDataProtectionProvider dataProtectionProvider, IUserRepository userRepository)
+    public IdentityController(IUserRepository userRepository)
     {
-        this.dataProtector = dataProtectionProvider.CreateProtector("Context");
         this.userRepository = userRepository;
     }
 
     [HttpGet]
-    public IActionResult Login()
+    public IActionResult Login(string returnUrl)
     {
+        base.ViewData["returnUrl"] = returnUrl;
+
         return base.View();
     }
 
@@ -37,17 +40,25 @@ public class IdentityController : Controller
 
         if (user is not null)
         {
-            var hash = this.dataProtector.Protect(user.Id.ToString());
-            base.HttpContext.Response.Cookies.Append("Authorize", hash);
+                var claims = new Claim[]
+                {
+                    new (ClaimTypes.Email, user.Email),
+                    new (ClaimTypes.Name, user.FirstName),
+                };
 
-            ViewData["UserId"] = user.Id;
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return RedirectToAction("Index", "Fine");
+                await base.HttpContext.SignInAsync(
+                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal: new ClaimsPrincipal(claimsIdentity)
+                );
         }
         else
         {
             return BadRequest("Wrong Data");
         }
+
+        return base.RedirectPermanent(userDto.ReturnUrl);
     }
 
     [HttpPost]
@@ -74,4 +85,9 @@ public class IdentityController : Controller
         }
         else return BadRequest("Wrong Data");
     }
+
+     public async Task LogOut() 
+     {
+        await base.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+     }
 }
