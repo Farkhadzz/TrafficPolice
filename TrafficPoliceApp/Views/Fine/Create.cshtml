@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Add Fine";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+
+<form method="post" action="/Fine">
+  <div class="mb-3">
+    <label for="finename" class="form-label">Fine Name : </label>
+    <input type="text" class="form-control" id="finename" name="finename">
+  </div>
+  <div class="mb-3">
+    <label for="price" class="form-label">Price</label>
+    <input type="number" class="form-control" id="price" name="price">
+  </div>
+  <button type="submit" class="btn btn-success">Add</button>
+</form>

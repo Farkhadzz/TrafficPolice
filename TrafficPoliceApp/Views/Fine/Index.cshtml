@@ -1,0 +1,23 @@
+@model IEnumerable<Fine>
+
+@{
+    ViewData["Title"] = "All Fines";
+}
+
+<h1 class="mb-5">@ViewData["Title"]</h1>
+
+<div>
+    @foreach(var fine in Model) {
+        <div class="card mb-4">
+            <div class="card-header">
+                @fine.FineName
+            </div>
+            <div class="card-body">
+                <blockquote class="blockquote mb-0">
+                <p>@fine.Price $</p>
+                @* <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer> *@
+                </blockquote>
+            </div>
+        </div>
+    }
+</div>
