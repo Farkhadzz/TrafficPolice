@@ -1,12 +1,14 @@
 USE [TrafficPoliceDb];
 
 CREATE TABLE Fines (
-	[Id] INT PRIMARY KEY identity,
-	[FineName] NVARCHAR(20) NOT NULL,
-	[CarNumber] NVARCHAR(10),
-	[CarModel] NVARCHAR(10),
-	[Price] DECIMAL NOT NULL
-)
+    [Id] INT PRIMARY KEY IDENTITY,
+    [FineName] NVARCHAR(20) NOT NULL,
+    [CarNumber] NVARCHAR(10),
+    [CarModel] NVARCHAR(10),
+    [Price] DECIMAL NOT NULL,
+    [UserId] INT,
+    FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
 
 CREATE TABLE Users (
 	[Id] INT PRIMARY KEY identity,

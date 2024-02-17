@@ -5,6 +5,7 @@ namespace TrafficPoliceApp.Repositories.Base
     public interface IFineRepository
     {
         Task<IEnumerable<Fine>> GetAllAsync();
-        Task InsertFineAsync(Fine fine);
+        Task InsertFineForUserAsync(Fine fine, int userId);
+        Task<IEnumerable<string>> GetColumnsAsync();
     }
 }

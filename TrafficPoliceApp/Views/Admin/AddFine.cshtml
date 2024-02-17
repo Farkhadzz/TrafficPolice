@@ -1,0 +1,23 @@
+@model int
+
+<h2>Add Fine</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label for="fineName">Fine Name:</label>
+        <input type="text" class="form-control" id="fineName" name="fineName" required>
+    </div>
+    <div class="form-group">
+        <label for="carNumber">Car Number:</label>
+        <input type="text" class="form-control" id="carNumber" name="carNumber" required>
+    </div>
+    <div class="form-group">
+        <label for="carModel">Car Model:</label>
+        <input type="text" class="form-control" id="carModel" name="carModel" required>
+    </div>
+    <div class="form-group">
+        <label for="price">Price:</label>
+        <input type="number" class="form-control" id="price" name="price" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Fine</button>
+</form>

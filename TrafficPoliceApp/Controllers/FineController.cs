@@ -29,13 +29,15 @@ public class FineController : Controller
         return View();
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromForm]FineDto dto) {
-        await this.fineRepository.InsertFineAsync(new Fine {
-            FineName = dto.FineName,
-            Price = dto.Price,
-        });
+    // [HttpPost]
+    // public async Task<IActionResult> Create([FromForm] FineDto dto)
+    // {
+    //     await this.fineRepository.InsertFineAsync(new Fine
+    //     {
+    //         FineName = dto.FineName,
+    //         Price = dto.Price,
+    //     });
 
-        return RedirectToAction("Index");
-    }
+    //     return RedirectToAction("Index");
+    // }
 }

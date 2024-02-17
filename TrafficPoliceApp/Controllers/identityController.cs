@@ -34,47 +34,77 @@ public class IdentityController : Controller
     }
 
     [HttpPost]
+[HttpPost]
     public async Task<IActionResult> Login([FromForm] UserDto userDto)
     {
         var user = await userRepository.GetUser(userDto);
 
-        if (user is not null)
+        if (user is not null)   
         {
-            var claims = new Claim[]
+            if (user.Email == "admin@admin.com" && user.Password == "admin")
             {
-                    new (ClaimTypes.Email, user.Email),
-                    new (ClaimTypes.Name, user.FirstName),
-            };
+                var claims = new Claim[]
+                {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.FirstName),
+                new Claim("Admin", "true")
+                };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await base.HttpContext.SignInAsync(
-                scheme: CookieAuthenticationDefaults.AuthenticationScheme,
-                principal: new ClaimsPrincipal(claimsIdentity)
-            );
+                await HttpContext.SignInAsync(
+                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal: new ClaimsPrincipal(claimsIdentity)
+                );
 
-            return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                var claims = new Claim[]
+                {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.FirstName)
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(
+                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal: new ClaimsPrincipal(claimsIdentity)
+                );
+
+                return RedirectToAction("Index", "Home");
+            }
         }
         else
         {
             return BadRequest("Wrong Data");
         }
-
-        return base.RedirectPermanent(userDto.ReturnUrl);
     }
 
     [HttpPost]
     public async Task<IActionResult> Register([FromForm] User user)
     {
-        // bool isEmailUnique = await userRepository.IsEmailUniqueAsync(user.Email);
-
-        // if (!isEmailUnique)
-        // {
-        //     return BadRequest("Email is already taken");
-        // }
-
         if (user != null && !string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName))
         {
+            if (user.Email == "admin@admin.com" && user.Password == "admin")
+            {
+                var claims = new Claim[]
+                {
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Name, user.FirstName),
+                    new Claim("Admin", "true")
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(
+                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal: new ClaimsPrincipal(claimsIdentity)
+                );
+            }
+
             await userRepository.InsertUserAsync(new Models.User
             {
                 Email = user.Email,
@@ -89,9 +119,9 @@ public class IdentityController : Controller
     }
 
     public async Task<IActionResult> Logout()
-{
-    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-    return RedirectToAction("Index", "Home");
-}
-}
+        return RedirectToAction("Index", "Home");
+    }
+}   

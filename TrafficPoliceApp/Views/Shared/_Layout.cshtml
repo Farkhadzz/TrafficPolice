@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Security.Claims
+
+@{
     bool IsAuthenticated = base.User.Identity.IsAuthenticated;
 }
 
@@ -13,7 +15,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TrafficPoliceApp.styles.css" asp-append-version="true" />
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 
 <body>
@@ -31,9 +33,19 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-action="Index" asp-controller="Home">Home</a>
                         </li>
+                    @if(User.Identity.IsAuthenticated)
+                    {
+
+                            if (((ClaimsIdentity)User.Identity).HasClaim(c => c.Type == "Admin" && c.Value == "true"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="Index" asp-controller="Admin">Add Fines</a>
+                                </li>
+                            }
                         <li class="nav-item">
                             <a class="nav-link" asp-action="Index" asp-controller="Fine">Fines</a>
                         </li>
+                    }
                         <li class="nav-item">
                             <a class="nav-link" href="#">About Us</a>
                         </li>
@@ -41,12 +53,13 @@
                             <a class="nav-link" href="#">Contact Us</a>
                         </li>
                     </ul>
+
                     @if (User.Identity.IsAuthenticated)
                     {
                         <span class="username-text">@User.Identity.Name</span>
                         <form asp-controller="Identity" asp-action="Logout" method="post">
                             <span class="material-symbols-outlined logout-icon">
-                            <a asp-controller="Identity" asp-action="Logout">logout</a>
+                                <a asp-controller="Identity" asp-action="Logout">logout</a>
                             </span>
                         </form>
                     }
@@ -69,42 +82,6 @@
         </nav>
     </header>
 
-    @{
-        if (ViewContext.RouteData.Values["controller"].ToString().Equals("Home", StringComparison.OrdinalIgnoreCase) &&
-
-
-
-        ViewContext.RouteData.Values["action"].ToString().Equals("Index", StringComparison.OrdinalIgnoreCase))
-
-
-
-        {
-            <main>
-                <div class="banner">
-                    <div class="main-banner">
-                        <h1 class="main-slogan">
-                            We are glad to see you on our Traffic Police website
-                        </h1>
-                    </div>
-                    <div class="banner-text">
-                        <h2 class="text">
-                            Here you can easily track your fines as well as traffic violations
-                        </h2>
-                    </div>
-                    <div class="banner-text">
-                        <h2 class="text">
-                            Get registered and easily track
-                        </h2>
-                    </div>
-                    <div class="banner-text">
-                        <button>
-                            <a asp-action="Register" asp-controller="Identity">Registration</a>
-                        </button>
-                    </div>
-                </div>
-            </main>
-        }
-    }
 
     <div class="container">
         <main role="main" class="pb-3">
