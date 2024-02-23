@@ -161,3 +161,10 @@ header {
   color: white;
   cursor: pointer;
 }
+
+.user-info-card {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}

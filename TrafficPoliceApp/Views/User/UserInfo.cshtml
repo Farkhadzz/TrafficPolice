@@ -1,0 +1,28 @@
+@model IEnumerable<Claim>
+
+@{
+    ViewData["Title"] = "User Info";
+
+    var claimTypes = new Dictionary<string, string>
+{
+{ClaimTypes.Name , "Firstname"},
+{ClaimTypes.Email , "Email adress"},
+};
+}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">User Information</h5>
+            <p class="card-text">
+                @foreach (var claim in Model)
+                {
+                <div>
+                    <label>@claimTypes[@claim.Type]</label>:
+                    <label>@claim.Value</label>
+                </div>
+                    }
+            </p>
+        </div>
+    </div>
+</div>

@@ -5,37 +5,13 @@ using TrafficPoliceApp.Models;
 using TrafficPoliceApp.Repositories.Base;
 using Microsoft.AspNetCore.Mvc;
 
-[Route("/[controller]")]
 public class UserController : Controller
 {
-    private readonly IUserRepository userRepository;
-
-    public UserController(IUserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     [HttpGet]
-    [ActionName("Index")]
-    public async Task<IActionResult> ShowAll()
+    public IActionResult UserInfo()
     {
-        var users = await this.userRepository.GetAllAsync();
+        var claims = base.User.Claims;
 
-        return View(model: users);
-    }
-
-    [HttpGet]
-    [Route("[action]")]
-    public IActionResult Create() {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Create([FromForm]UserDto dto) {
-        await this.userRepository.InsertUserAsync(new User {
-            Email = dto.Email,
-            Password = dto.Password
-        });
-
-        return RedirectToAction("Index");
+        return base.View(model: claims);
     }
 }
