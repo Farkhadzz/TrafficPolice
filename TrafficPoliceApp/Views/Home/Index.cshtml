@@ -2,27 +2,35 @@
     ViewData["Title"] = "Home Page";
 }
 
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+
+
 <main>
-    <div class="banner">
-        <div class="main-banner">
-            <h1 class="main-slogan">
-                We are glad to see you on our Traffic Police website
-            </h1>
+    <main>
+        <div class="banner">
+            <div class="main-banner">
+                <h1 class="main-slogan animate__animated animate__fadeInUp">
+                    We are glad to see you on our Traffic Police website
+                </h1>
+            </div>
+            <div class="banner-text">
+                <h2 class="text animate__animated animate__fadeInUp">
+                    Here you can easily track your fines as well as traffic violations
+                </h2>
+            </div>
+            <div class="banner-text">
+                <h2 class="text animate__animated animate__fadeInUp">
+                    Get registered and easily track
+                </h2>
+            </div>
+            <div class="banner-text animate__animated animate__fadeInUp">
+                <button>
+                    <a asp-action="Register" asp-controller="Identity">Registration</a>
+                </button>
+            </div>
         </div>
-        <div class="banner-text">
-            <h2 class="text">
-                Here you can easily track your fines as well as traffic violations
-            </h2>
-        </div>
-        <div class="banner-text">
-            <h2 class="text">
-                Get registered and easily track
-            </h2>
-        </div>
-        <div class="banner-text">
-            <button>
-                <a asp-action="Register" asp-controller="Identity">Registration</a>
-            </button>
-        </div>
-    </div>
+    </main>
+
 </main>

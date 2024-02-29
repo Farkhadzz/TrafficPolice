@@ -168,3 +168,39 @@ header {
   text-align: center;
   align-items: center;
 }
+
+.qr-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Для центрирования по вертикали */
+}
+
+.qr-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qr-link > div {
+  margin: 3rem; /* Для создания отступов между изображениями */
+  box-shadow: 0 0px 40px rgba(0, 0, 0, 1); /* Тень */
+}
+
+.qr-link img {
+  width: 40vh; /* Фиксированная ширина изображений */
+  height: auto; /* Автоматическое соотношение сторон */
+}
+
+.qr-text {
+  display: flex;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.867);
+  font-size: 32px;
+  margin-top: 10px;
+  font-family: 'Lato', sans-serif;
+}
+
+.main-form {
+  box-shadow: 0 0px 15px rgba(0, 0, 0, 1); /* Тень */
+}

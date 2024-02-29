@@ -50,7 +50,7 @@
                             <a class="nav-link" href="#">About Us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Contact Us</a>
+                            <a class="nav-link" asp-action="ContactUs" asp-controller="Home">Contact Us</a>
                         </li>
                         @if(User.Identity.IsAuthenticated){
                             <li class="nav-item">
