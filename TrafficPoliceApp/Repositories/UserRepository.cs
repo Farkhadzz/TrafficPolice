@@ -5,63 +5,48 @@ using TrafficPoliceApp.Models;
 using TrafficPoliceApp.Repositories.Base;
 using TrafficPoliceApp.Dtos;
 using Dapper;
+using Turbo.az.Data;
+
 
 public class UserRepository : IUserRepository
 {
     private readonly string ConnectionString;
+    private readonly MyDbContext dbContext;
+    public UserRepository(MyDbContext dbContext)
+    {
+        this.dbContext = dbContext;
+    }
 
     public UserRepository(string ConnectionString)
     {
         this.ConnectionString = ConnectionString;
     }
 
-    public async Task<IEnumerable<User>> GetAllAsync()
+    public IEnumerable<User> GetAllAsync()
     {
-        using var connection = new SqlConnection(ConnectionString);
-
-        var users = await connection.QueryAsync<User>("SELECT * FROM [Users]");
+        var users = this.dbContext.Users.Where( user => 
+        user.FirstName != "Admin".AsEnumerable());
 
         return users;
     }
 
     public async Task InsertUserAsync(User user) {
-        
-        using var connection = new SqlConnection(ConnectionString);
-        
-        var users = await connection.ExecuteAsync(
-            sql: "INSERT INTO [Users] (FirstName, LastName, Email, Age, Password) values (@FirstName, @LastName, @Email, @Age, @Password);",
-            param: user);
+        this.dbContext.Users.Add(user);
+        await this.dbContext.SaveChangesAsync();
     }
 
-    public async Task<User> GetUser(UserDto userDto)
+    public User GetUser(UserDto userDto)
     {
-        using var connection = new SqlConnection(ConnectionString);
-        
-        var user = await connection.QueryFirstOrDefaultAsync<User>(
-            "SELECT * FROM Users WHERE Email = @Email AND Password = @Password",
-            new { Email = userDto.Email, Password = userDto.Password });
+        var user = this.dbContext.Users.FirstOrDefault( u => 
+        u.Email == userDto.Email && u.Password == userDto.Password);
 
         return user;
     }
 
     public async Task<User> GetUserById(User user)
     {
-        using var connection = new SqlConnection(ConnectionString);
+        var userId = await this.dbContext.Users.FindAsync(user.Id);
 
-        var userId = await connection.QueryFirstOrDefaultAsync<User>(
-            "SELECT [Id] FROM [Users]",
-            new { Id = user.Id});
-
-            return userId;
+        return userId;
     }
-
-    // public async Task<bool> IsEmailUniqueAsync(string email)
-    // {
-    //     using var connection = new SqlConnection(ConnectionString);
-    //     var result = await connection.ExecuteScalarAsync<bool>(
-    //         "SELECT COUNT(*) FROM Users WHERE Email = @Email",
-    //         new { Email = email });
-
-    //     return result == null;
-    // }
 }

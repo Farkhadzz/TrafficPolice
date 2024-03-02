@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TrafficPoliceApp.Repositories;
 using TrafficPoliceApp.Repositories.Base;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Turbo.az.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthorization();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(o => 
@@ -13,6 +16,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         o.LoginPath = "/Identity/Login";
         o.ReturnUrlParameter = "returnUrl";
     });
+
 
 builder.Services.AddSingleton<IFineRepository, FineRepository>();
 
@@ -44,6 +48,12 @@ builder.Services.AddScoped<ILoggerRepository>(provider =>
     bool isCustomLoggingEnabled = builder.Configuration.GetSection("isCustomLoggingEnabled").Get<bool>();
 
     return new LoggingRepository(connectionString, isCustomLoggingEnabled);
+});
+
+builder.Services.AddDbContext<MyDbContext>(dbContextOptionsBuilder =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("TrafficPoliceDb");
+    dbContextOptionsBuilder.UseSqlServer(connectionString);
 });
 
 var app = builder.Build();

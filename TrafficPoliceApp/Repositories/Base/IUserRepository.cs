@@ -5,9 +5,9 @@ namespace TrafficPoliceApp.Repositories.Base
 {
     public interface IUserRepository
     {
-        Task<IEnumerable<User>> GetAllAsync();
+        IEnumerable<User> GetAllAsync();
         Task InsertUserAsync(User user);
-        Task<User?> GetUser(UserDto userDto);
+        User GetUser(UserDto userDto);
         Task<User?> GetUserById(User user);
     }
 }
