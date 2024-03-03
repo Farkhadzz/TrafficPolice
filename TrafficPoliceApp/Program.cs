@@ -1,60 +1,44 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using TrafficPoliceApp.Repositories;
 using TrafficPoliceApp.Repositories.Base;
+using TrafficPoliceApp.Services.Base;
+using TrafficPoliceApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Turbo.az.Data;
+using TrafficPoliceApp.Data;
+using TrafficPoliceApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthorization();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(o => 
-    {
-        o.LoginPath = "/Identity/Login";
-        o.ReturnUrlParameter = "returnUrl";
-    });
+// builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//     .AddCookie(o => 
+//     {
+//         o.LoginPath = "/Identity/Login";
+//         o.ReturnUrlParameter = "returnUrl";
+//     });
 
 
-builder.Services.AddSingleton<IFineRepository, FineRepository>();
+builder.Services.AddScoped<IFineRepository, FineRepository>();
 
-builder.Services.AddSingleton<IUserRepository>(provider => 
-{
-    string connectionStringName = "TrafficPoliceDb";
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-    string? connectionString = builder.Configuration.GetConnectionString(connectionStringName);
-
-    if (string.IsNullOrEmpty(connectionString) || string.IsNullOrWhiteSpace(connectionString)) 
-    {
-        throw new Exception($"{connectionStringName} not found");
-    }
-
-    return new UserRepository(connectionString);
-});
-
-builder.Services.AddScoped<ILoggerRepository>(provider => 
-{
-    string connectionStringName = "TrafficPoliceDb";
-
-    string? connectionString = builder.Configuration.GetConnectionString(connectionStringName);
-
-    if (string.IsNullOrEmpty(connectionString) || string.IsNullOrWhiteSpace(connectionString)) 
-    {
-        throw new Exception($"{connectionStringName} not found");
-    }
-
-    bool isCustomLoggingEnabled = builder.Configuration.GetSection("isCustomLoggingEnabled").Get<bool>();
-
-    return new LoggingRepository(connectionString, isCustomLoggingEnabled);
-});
+builder.Services.AddScoped<ILoggerRepository, LoggingRepository>();
 
 builder.Services.AddDbContext<MyDbContext>(dbContextOptionsBuilder =>
 {
     var connectionString = builder.Configuration.GetConnectionString("TrafficPoliceDb");
     dbContextOptionsBuilder.UseSqlServer(connectionString);
 });
+
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+    options.Password.RequireNonAlphanumeric = true;
+})
+    .AddEntityFrameworkStores<MyDbContext>();
 
 var app = builder.Build();
 

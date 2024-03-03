@@ -5,7 +5,7 @@ using TrafficPoliceApp.Models;
 using TrafficPoliceApp.Repositories.Base;
 using TrafficPoliceApp.Dtos;
 using Dapper;
-using Turbo.az.Data;
+using TrafficPoliceApp.Data;
 
 
 public class UserRepository : IUserRepository
@@ -24,20 +24,28 @@ public class UserRepository : IUserRepository
 
     public IEnumerable<User> GetAllAsync()
     {
-        var users = this.dbContext.Users.Where( user => 
+        var users = this.dbContext.Users.Where(user =>
         user.FirstName != "Admin".AsEnumerable());
 
         return users;
     }
 
-    public async Task InsertUserAsync(User user) {
-        this.dbContext.Users.Add(user);
-        await this.dbContext.SaveChangesAsync();
+    public async Task InsertUserAsync(User user)
+    {
+        try
+        {
+            await dbContext.Users.AddAsync(user);
+            await dbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     public User GetUser(UserDto userDto)
     {
-        var user = this.dbContext.Users.FirstOrDefault( u => 
+        var user = this.dbContext.Users.FirstOrDefault(u =>
         u.Email == userDto.Email && u.Password == userDto.Password);
 
         return user;

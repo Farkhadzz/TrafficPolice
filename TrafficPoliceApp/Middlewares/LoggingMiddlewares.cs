@@ -2,6 +2,8 @@ using System.Text;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Extensions;
 using TrafficPoliceApp.Repositories.Base;
+using TrafficPoliceApp.Services.Base;
+using TrafficPoliceApp.Services;
 using TrafficPoliceApp.Repositories;
 using TrafficPoliceApp.Models;
 
@@ -9,16 +11,17 @@ using TrafficPoliceApp.Models;
 namespace TrafficPoliceApp.Middlewares;
 public class LoggingMiddleware : IMiddleware
 {
-    private readonly ILoggerRepository loggerRepository;
+    private readonly ICustomLogger logger;
     private readonly IDataProtector dataProtector;
-    public LoggingMiddleware(ILoggerRepository loggerRepository, IDataProtectionProvider dataProtectionProvider)
+    public LoggingMiddleware(ICustomLogger logger, IDataProtectionProvider dataProtectionProvider)
     {
-        this.loggerRepository = loggerRepository;
-        this.dataProtector = dataProtectionProvider.CreateProtector("Context");
+        this.logger = logger;
+
+        this.dataProtector = dataProtectionProvider.CreateProtector("Protector");
     }
     public async Task InvokeAsync(HttpContext httpContext, RequestDelegate next)
     {
-        if (!loggerRepository.IsLoggingEnabled())
+        if (!logger.IsLoggingEnabled())
         {
             await next.Invoke(httpContext);
         }
@@ -40,8 +43,11 @@ public class LoggingMiddleware : IMiddleware
                 }
 
                 httpContext.Request.Body.Position = 0;
+
                 StreamReader requestReader = new(httpContext.Request.Body, Encoding.UTF8);
+
                 requestBody = await requestReader.ReadToEndAsync();
+
                 httpContext.Request.Body.Position = 0;
             }
 
@@ -52,18 +58,25 @@ public class LoggingMiddleware : IMiddleware
             using (var memStream = new MemoryStream())
             {
                 httpContext.Response.Body = memStream;
+
                 await next.Invoke(httpContext);
+
                 memStream.Position = 0;
+
                 StreamReader responseReader = new(httpContext.Response.Body, Encoding.UTF8);
+
                 responseBody = await responseReader.ReadToEndAsync();
+
                 memStream.Position = 0;
 
                 await memStream.CopyToAsync(originalBody);
             }
 
             var statusCode = httpContext.Response.StatusCode;
+
             httpContext.Response.Body = originalBody;
-            await this.loggerRepository.Logging(new Models.Logging
+
+            await this.logger.Log(new Models.Logging
             {
                 UserId = userId,
                 Url = url,

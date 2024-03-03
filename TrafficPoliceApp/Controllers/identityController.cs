@@ -7,23 +7,25 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Principal;
+using TrafficPoliceApp.Services.Base;
 
 namespace TrafficPoliceApp.Controllers;
 
 public class IdentityController : Controller
 {
     private readonly IUserRepository userRepository;
+    private readonly IIdentityService identityService;
 
-    public IdentityController(IUserRepository userRepository)
+    public IdentityController(IUserRepository userRepository, IIdentityService identityService)
     {
         this.userRepository = userRepository;
+        this.identityService = identityService;
     }
 
     [HttpGet]
-    public IActionResult Login(string? returnUrl)
+    public IActionResult Login()
     {
-        base.ViewData["returnUrl"] = returnUrl;
-
         return base.View();
     }
 
@@ -34,95 +36,33 @@ public class IdentityController : Controller
     }
 
     [HttpPost]
-[HttpPost]
+
+    [HttpPost]
     public async Task<IActionResult> Login([FromForm] UserDto userDto)
     {
-        var user = await userRepository.GetUser(userDto);
-
-        if (user is not null)   
-        {
-            if (user.Email == "admin@admin.com" && user.Password == "admin")
-            {
-                var claims = new Claim[]
-                {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.FirstName),
-                new Claim("Admin", "true")
-                };
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                await HttpContext.SignInAsync(
-                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
-                    principal: new ClaimsPrincipal(claimsIdentity)
-                );
-
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                var claims = new Claim[]
-                {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.FirstName)
-                };
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                await HttpContext.SignInAsync(
-                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
-                    principal: new ClaimsPrincipal(claimsIdentity)
-                );
-
-                return RedirectToAction("Index", "Home");
-            }
+        try {
+            await this.identityService.LoginAsync(userDto);
         }
-        else
+        catch(Exception ex)
         {
-            return BadRequest("Wrong Data");
+            return base.BadRequest(ex.Message);
         }
+        return base.RedirectToAction(actionName: "Index", controllerName: "Home");
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register([FromForm] User user)
+    public async Task<IActionResult> Register([FromForm] UserDto userDto)
     {
-        if (user != null && !string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName))
-        {
-            if (user.Email == "admin@admin.com" && user.Password == "admin")
-            {
-                var claims = new Claim[]
-                {
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Name, user.FirstName),
-                    new Claim(ClaimTypes.Surname, user.LastName),
-                    new Claim("Admin", "true")
-                };
+        var result = await this.identityService.RegisterAsync(userDto);
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                await HttpContext.SignInAsync(
-                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
-                    principal: new ClaimsPrincipal(claimsIdentity)
-                );
-            }
-
-            await userRepository.InsertUserAsync(new Models.User
-            {
-                Email = user.Email,
-                Password = user.Password,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Age = user.Age
-            });
-            return base.RedirectToAction("Login");
-        }
-        else return BadRequest("Wrong Data");
+        return base.RedirectToAction("Login");
     }
 
+    [HttpDelete]
     public async Task<IActionResult> Logout()
     {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await this.identityService.LogoutAsync();
 
         return RedirectToAction("Index", "Home");
     }
-}   
+}
