@@ -36,7 +36,9 @@ builder.Services.AddScoped<IIdentityService, IdentityService>();
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
-    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.RequireUniqueEmail = true;
 })
     .AddEntityFrameworkStores<MyDbContext>();
 

@@ -34,20 +34,60 @@ public class IdentityService : IIdentityService
         await userManager.AddToRoleAsync(user, role.Name);
     }
 
+    private bool IsValidEmail(string email)
+{
+    try
+    {
+        var addr = new System.Net.Mail.MailAddress(email);
+        return addr.Address == email;
+    }
+    catch
+    {
+        return false;
+    }
+}
+
+
     public async Task<IdentityResult> RegisterAsync(UserDto userDto)
     {
+        if (string.IsNullOrEmpty(userDto.FirstName) ||
+        string.IsNullOrEmpty(userDto.LastName) ||
+        string.IsNullOrEmpty(userDto.Email) ||
+        string.IsNullOrEmpty(userDto.Password))
+    {
+        throw new ArgumentException("All fields are required");
+    }
+
+    // Проверка на валидность email адреса
+    if (!IsValidEmail(userDto.Email))
+    {
+        throw new ArgumentException("Invalid email address");
+    }
+
         var newUser = new User
         {
             Email = userDto.Email,
+            UserName = userDto.Email,
             FirstName = userDto.FirstName,
             LastName = userDto.LastName
         };
 
         var result = await this.userManager.CreateAsync(newUser, userDto.Password!);
-        if(result is null)
+        if (result.Succeeded)
         {
-            System.Console.WriteLine("Null");
+            Console.WriteLine("Пользователь успешно создан");
         }
+        else
+        {
+            foreach (var error in result.Errors)
+            {
+                System.Console.WriteLine(newUser.Email);
+                System.Console.WriteLine(newUser.FirstName);
+                System.Console.WriteLine(newUser.LastName);
+                Console.WriteLine($"Ошибка при создании пользователя: {error.Description}");
+            }
+        }
+
 
         return result;
     }
